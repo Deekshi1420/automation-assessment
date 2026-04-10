@@ -10,4 +10,5 @@ test('Login test', async ({ page }) => {
   await page.waitForURL('**/inventory.html');
 
   await expect(page).toHaveURL('https://www.saucedemo.com/inventory.html');
+  await expect(page.locator('.inventory_list')).toBeVisible();
 });

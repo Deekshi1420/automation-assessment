@@ -1,6 +1,6 @@
 const { test, expect } = require('@playwright/test');
 
-test('Login test', async ({ page }) => {
+test('Complete UI Flow', async ({ page }) => {
 
   await page.goto('https://www.saucedemo.com/');
 
@@ -8,10 +8,32 @@ test('Login test', async ({ page }) => {
   await page.fill('#password', 'secret_sauce');
   await page.click('#login-button');
 
-  // Wait for inventory page
-  await page.waitForSelector('.inventory_list');
+  // Sort high to low
+  await page.selectOption('.product_sort_container', 'hilo');
 
-  // Assertions
-  await expect(page).toHaveURL(/inventory/);
-  await expect(page.locator('.inventory_list')).toBeVisible();
+  // Get prices
+  const prices = await page.locator('.inventory_item_price').allTextContents();
+  const numericPrices = prices.map(p => parseFloat(p.replace('$', '')));
+
+  // Verify sorted
+  const sorted = [...numericPrices].sort((a, b) => b - a);
+  expect(numericPrices).toEqual(sorted);
+
+  // Add top 2 items
+  await page.locator('.inventory_item button').nth(0).click();
+  await page.locator('.inventory_item button').nth(1).click();
+
+  // Go to cart
+  await page.click('.shopping_cart_link');
+
+  // Checkout
+  await page.click('#checkout');
+  await page.fill('#first-name', 'test');
+  await page.fill('#last-name', 'user');
+  await page.fill('#postal-code', '12345');
+  await page.click('#continue');
+  await page.click('#finish');
+
+  // Final assertion
+  await expect(page.locator('.complete-header')).toHaveText('Thank you for your order!');
 });

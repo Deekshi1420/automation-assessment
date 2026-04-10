@@ -1,5 +1,3 @@
-// playwright.config.js
-
 const { defineConfig } = require('@playwright/test');
 
 module.exports = defineConfig({
@@ -11,6 +9,5 @@ module.exports = defineConfig({
     headless: true,
     actionTimeout: 15000,
     navigationTimeout: 30000,
-    trace: 'on-first-retry'
   },
 });

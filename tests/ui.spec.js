@@ -7,6 +7,8 @@ test('Login test', async ({ page }) => {
   await loginPage.goto();
   await loginPage.login('standard_user', 'secret_sauce');
 
-  await expect(page).toHaveURL(/inventory.html/);
+  await page.waitForLoadState('networkidle');
+
+  await expect(page).toHaveURL('https://www.saucedemo.com/inventory.html');
   await expect(page.locator('.inventory_list')).toBeVisible();
 });
